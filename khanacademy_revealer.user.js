@@ -63,7 +63,7 @@
                 };
                 image.src = url;
             } else {
-                message[message.indexOf(ans)] = ans.replace("$", "")
+                message[message.indexOf(ans)] = ans.replaceAll("$", "")
             }
         })
         const text = message.join("\n")
