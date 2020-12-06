@@ -46,24 +46,26 @@
     const logAnswer = (message) => {
         let style = "color: tomato; -webkit-text-stroke: 1px black; font-size:20px; font-weight:bold;";
         message.map(ans => {
-            if (typeof ans == "string" && ans.includes("web+graphie")) {
-                const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
-                const image = new Image();
+            if (typeof ans == "string") {
+                if (ans.includes("web+graphie")) {
+                    const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
+                    const image = new Image();
 
-                message[message.indexOf(ans)] = ""
-                image.onload = function () {
-                    const imageStyle = [
-                        'font-size: 1px;',
-                        'line-height: ' + this.height % 2 + 'px;',
-                        'padding: ' + this.height * .5 + 'px ' + this.width * .5 + 'px;',
-                        'background-size: ' + this.width + 'px ' + this.height + 'px;',
-                        'background: url(' + url + ');'
-                    ].join(' ');
-                    console.log('%c ', imageStyle);
-                };
-                image.src = url;
-            } else {
-                message[message.indexOf(ans)] = ans.replaceAll("$", "")
+                    message[message.indexOf(ans)] = ""
+                    image.onload = function () {
+                        const imageStyle = [
+                            'font-size: 1px;',
+                            'line-height: ' + this.height % 2 + 'px;',
+                            'padding: ' + this.height * .5 + 'px ' + this.width * .5 + 'px;',
+                            'background-size: ' + this.width + 'px ' + this.height + 'px;',
+                            'background: url(' + url + ');'
+                        ].join(' ');
+                        console.log('%c ', imageStyle);
+                    };
+                    image.src = url;
+                } else {
+                    message[message.indexOf(ans)] = ans.replaceAll("$", "")
+                }
             }
         })
         const text = message.join("\n")
