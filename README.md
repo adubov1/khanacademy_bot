@@ -22,7 +22,11 @@ If this script helped or interested you, please consider staring the repo above.
 It's pretty simple. On every 'quiz' you open in the app, your browser makes a request to `/getAssessmentItem`. The server responds with everything your client needs to draw **and grade** your question. Within this graphql response is a json blob containing a list of questions, most of them with a `correct: boolean` attribute.
 
 ## Implementation
-I wrote this for tampermonkey, although all should work on gecko. It essentially hooks into the browser's `fetch`, which is what Khan Academy uses now (this is why the some old exploits no longer work, along with the endpoint change), and when `/getAssessmentItem` is requested, it logs the "important" part of the response.
+I wrote this for Chrome, although all should work on gecko. It essentially hooks into the browser's `fetch`, which is what Khan Academy uses now instead of `XMLHttpRequest` (this is why the some old exploits no longer work, along with the endpoint change), and when `/getAssessmentItem` is requested, it logs the "important" part of the response.
 
 ## Licence
-This has the GNU GPL 3.0 licence. I expect most users will be people like me who have AP Stats assignments and no will to do them. I don't care too much about what you do with it, but I like credit :)
+This has the GNU GPL 3.0 licence. I expect most users will be people like me who have AP Stats assignments and no will to do them.  I don't care too much about what you do with it, but I like credit :)
+
+<br><br>
+P.S.
+If you want to take a crack at making a front-end to this script, please let me know! I'd love to add your front end and credit you accordingly!
