@@ -1,21 +1,20 @@
-# I don't have a better name
-An answer revealer.
+# An answer revealer for Khan Academy
 
-  *This works as of 12/5/2020* 
+  *Working as of 12/5/2020* 
 
 If this script helped or interested you, please consider staring the repo above. That number looks cool when it's big
 
-Written to be used with a userscript manager, like [TamperMonkey for Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or [Greasemonkey for Firefox](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/). Download one of these, then click 
 
 ## Usage
-The script will console log answers as the browser gets them. That's about it.
-
+1. Download a userscript manager like [TamperMonkey for Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or [Greasemonkey for Firefox](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/).
+2. Use [this link](https://greasyfork.org/scripts/418155-khan-academy-bot/code/Khan%20Academy%20Bot.user.js) to install the script. 
+3. Open Developer Tools and go to the Console tab. The script will console log answers as the browser gets them.
 
 ## Gotchas
 - Khan Academy always requests the current and next question, so **expect the second to last console log message to be the correct answer**
 - This works only for expression, free response, multiple choice, and dropdown questions.
-- When there are multiple answers, fill in the boxes left-to-right and then down. Example below
-  - answer: `[1, 2, 3, 4]`  question:  ![picture of question](readme/multiple_free_response.png)
+- When there are multiple answers, fill in the boxes left-to-right and then down. You can also press tab to get to the next field. Example below
+  - answer: `[1, 2, 3, 4]`  question: <img src="readme/multiple_free_response.png" width="250">)
 - The script will do its best to find the answer in the question data (read below to understand the exploit)
 - I am lazy, therefore this is buggy. Don't be surprised when you run into a question you'll actually have to do
 
