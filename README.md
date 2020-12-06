@@ -14,7 +14,7 @@ If this script helped or interested you, please consider staring the repo above.
 - Khan Academy always requests the current and next question, so **expect the second to last console log message to be the correct answer**
 - This works only for expression, free response, multiple choice, and dropdown questions.
 - When there are multiple answers, fill in the boxes left-to-right and then down. You can also press tab to get to the next field. Example below
-  - answer: `[1, 2, 3, 4]`  question: <img src="readme/multiple_free_response.png" width="250">)
+  - answer: `[1, 2, 3, 4]`  question: <img src="readme/multiple_free_response.png" width="250">
 - The script will do its best to find the answer in the question data (read below to understand the exploit)
 - I am lazy, therefore this is buggy. Don't be surprised when you run into a question you'll actually have to do
 
