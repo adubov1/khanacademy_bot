@@ -62,6 +62,8 @@
                     console.log('%c ', imageStyle);
                 };
                 image.src = url;
+            } else {
+                message[message.indexOf(ans)] = ans.replace("$", "")
             }
         })
         const text = message.join("\n")
