@@ -7,7 +7,7 @@ If this script helped or interested you, please consider staring the repo above.
 
 ## Usage
 1. Download a userscript manager like [TamperMonkey for Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or [Greasemonkey for Firefox](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/).
-2. Use [this link](https://greasyfork.org/scripts/418155-khan-academy-bot/code/Khan%20Academy%20Bot.user.js) to install the script. 
+2. Use [this link](https://github.com/adubov1/khanacademy_bot/raw/main/khanacademy_revealer.user.js) to install the script. 
 3. Open Developer Tools and go to the Console tab. The script will console log answers as the browser gets them.
 
 ## Gotchas
