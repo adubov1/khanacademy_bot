@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      0.1
+// @version      0.2
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -9,7 +9,7 @@
 
 (function () {
     'use strict';
-    window.loaded = false
+    window.loaded = false;
 
     const originalFetch = window.fetch;
     window.fetch = function () {
@@ -52,7 +52,7 @@
                     const image = new Image();
 
                     message[message.indexOf(ans)] = ""
-                    image.onload = function () {
+                    image.onload = () => {
                         const imageStyle = [
                             'font-size: 1px;',
                             'line-height: ' + this.height % 2 + 'px;',
@@ -73,44 +73,41 @@
     }
 
     function correctMultipleChoiceAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map(function (widget) {
-            if (!widget?.options?.choices) return;
+        let answers = Object.values(question.widgets).map((widget) => {
+            if (!widget.options?.choices) return;
             return widget.options.choices.map(choice => {
                 if (choice.correct) {
                     return choice.content;
                 }
             });
-        }).flat().filter(function (val) { return val !== undefined; });
+        }).flat().filter((val) => { return val !== undefined; });
         logAnswer(answers);
     }
 
     function correctFreeResponseAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map(function (widget) {
+        let answers = Object.values(question.widgets).map((widget) => {
             return widget.options.answers.map(answer => {
                 return answer.value;
             });
-        }).flat().filter(function (val) { return val !== undefined; });
+        }).flat().filter((val) => { return val !== undefined; });
         logAnswer(answers);
     }
 
     function correctExpressionAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map(function (widget) {
+        let answers = Object.values(question.widgets).map((widget) => {
             return widget.options.answerForms.map(answer => {
-                if (answer.status != 'correct') return;
-                return answer.value;
+                if (Object.values(answer).includes("correct")) return answer.value;
             });
-        }).flat().filter((obj) => obj);
+        }).flat();
         logAnswer(answers);
     }
 
     function correctDropdownAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map(function (widget) {
+        let answers = Object.values(question.widgets).map((widget) => {
             return widget.options.choices.map(choice => {
-                if (choice.correct) {
-                    return choice.content;
-                }
+                if (choice.correct) return choice.content;
             });
-        }).flat().filter((obj) => obj);
+        }).flat();
         logAnswer(answers);
     }
 })();
