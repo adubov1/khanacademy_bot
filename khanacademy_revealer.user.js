@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      0.2
+// @version      0.3
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -20,16 +20,18 @@
                     const item = json.data.assessmentItem.item.itemData;
                     const question = JSON.parse(item).question;
 
-                    switch (Object.keys(question.widgets)[0].split(" ")[0]) {
-                        case "numeric-input":
-                            return correctFreeResponseAnswerFrom(question);
-                        case "radio":
-                            return correctMultipleChoiceAnswerFrom(question);
-                        case "expression":
-                            return correctExpressionAnswerFrom(question);
-                        case "dropdown":
-                            return correctDropdownAnswerFrom(question);
-                    }
+                    Object.keys(question.widgets).map(widget => {
+                        switch (widget.split(" ")[0]) {
+                            case "numeric-input":
+                                return correctFreeResponseAnswerFrom(question);
+                            case "radio":
+                                return correctMultipleChoiceAnswerFrom(question);
+                            case "expression":
+                                return correctExpressionAnswerFrom(question);
+                            case "dropdown":
+                                return correctDropdownAnswerFrom(question);
+                        }
+                    });
                 });
             }
             if (!window.loaded) {
