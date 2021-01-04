@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      1.1
+// @version      1.2
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -40,7 +40,7 @@
             answer.map(ans => {
                 if (typeof ans == "string") {
                     if (ans.includes("web+graphie")) {
-                        this.printImage(ans);
+                        this.printImage(answer, ans);
                     } else {
                         answer[answer.indexOf(ans)] = ans.replaceAll("$", "");
                     }
@@ -53,7 +53,7 @@
             }
         }
 
-        printImage(ans) {
+        printImage(answer, ans) {
             const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
             const image = new Image();
 
