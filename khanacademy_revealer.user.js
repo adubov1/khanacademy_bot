@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      0.3
+// @version      1.0
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -11,33 +11,76 @@
     'use strict';
     window.loaded = false;
 
+    class Answer {
+        constructor(answer, type) {
+            this.body = answer;
+            this.type = type;
+        }
+
+        get isMultiChoice() {
+            return this.type == "multiple_choice";
+        }
+
+        get isFreeResponse() {
+            return this.type == "free_response";
+        }
+
+        get isExpression() {
+            return this.type == "expression";
+        }
+
+        get isDropdown() {
+            return this.type == "dropdown";
+        }
+
+        log() {
+            logAnswer(this.body);
+        }
+    }
+
     const originalFetch = window.fetch;
     window.fetch = function () {
         return originalFetch.apply(this, arguments).then((res) => {
             if (res.url.includes("/getAssessmentItem")) {
                 const clone = res.clone();
                 clone.json().then(json => {
-                    const item = json.data.assessmentItem.item.itemData;
-                    const question = JSON.parse(item).question;
+                    let item, question;
 
-                    Object.keys(question.widgets).map(widget => {
-                        switch (widget.split(" ")[0]) {
+                    try {
+                        item = json.data.assessmentItem.item.itemData;
+                        question = JSON.parse(item).question;
+                    } catch {
+                        let errorIteration = () => { return localStorage.getItem("error_iter") || 0; }
+                        localStorage.setItem("error_iter", errorIteration() + 1);
+
+                        if (errorIteration() < 4) {
+                            return location.reload();
+                        } else {
+                            return console.log("%c An error occurred", "color: red; font-weight: bolder; font-size: 20px;");
+                        }
+                    }
+
+                    if (!question) return;
+
+                    Object.keys(question.widgets).map(widgetName => {
+                        switch (widgetName.split(" ")[0]) {
                             case "numeric-input":
-                                return correctFreeResponseAnswerFrom(question);
+                                return freeResponseAnswerFrom(question).log();
                             case "radio":
-                                return correctMultipleChoiceAnswerFrom(question);
+                                return multipleChoiceAnswerFrom(question).log();
                             case "expression":
-                                return correctExpressionAnswerFrom(question);
+                                return expressionAnswerFrom(question).log();
                             case "dropdown":
-                                return correctDropdownAnswerFrom(question);
+                                return dropdownAnswerFrom(question).log();
                         }
                     });
                 });
             }
+
             if (!window.loaded) {
                 console.clear();
-                console.log("%cAnswer Revealer Loaded", "color: green; -webkit-text-stroke: 1px black; font-size:30px; font-weight:bolder;");
-                console.log("%cCreated by Alex Dubov", "color: white; -webkit-text-stroke: 1px black; font-size:10px; font-weight:bold;");
+                console.log("%c Answer Revealer ", "color: mediumvioletred; -webkit-text-stroke: .5px black; font-size:40px; font-weight:bolder; padding: .2rem;");
+                console.log("%cCreated by Alex Dubov (@adubov1)", "color: white; -webkit-text-stroke: .5px black; font-size:15px; font-weight:bold;");
                 window.loaded = true;
             }
 
@@ -45,71 +88,95 @@
         })
     }
 
-    const logAnswer = (message) => {
-        let style = "color: tomato; -webkit-text-stroke: 1px black; font-size:20px; font-weight:bold;";
-        message.map(ans => {
+    function logAnswer(answer) {
+        const style = "color: coral; -webkit-text-stroke: .5px black; font-size:24px; font-weight:bold;";
+
+        const printImage = () => {
+            const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
+            const image = new Image();
+
+            image.src = url;
+            answer[answer.indexOf(ans)] = "";
+            image.onload = () => {
+                const imageStyle = [
+                    'font-size: 1px;',
+                    'line-height: ', this.height % 2, 'px;',
+                    'padding: ', this.height * .5, 'px ', this.width * .5, 'px;',
+                    'background-size: ', this.width, 'px ', this.height, 'px;',
+                    'background: url(', url, ');'
+                ].join(' ');
+                console.log('%c ', imageStyle);
+            };
+
+        }
+
+        answer.map(ans => {
             if (typeof ans == "string") {
                 if (ans.includes("web+graphie")) {
-                    const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
-                    const image = new Image();
-
-                    message[message.indexOf(ans)] = ""
-                    image.onload = () => {
-                        const imageStyle = [
-                            'font-size: 1px;',
-                            'line-height: ' + this.height % 2 + 'px;',
-                            'padding: ' + this.height * .5 + 'px ' + this.width * .5 + 'px;',
-                            'background-size: ' + this.width + 'px ' + this.height + 'px;',
-                            'background: url(' + url + ');'
-                        ].join(' ');
-                        console.log('%c ', imageStyle);
-                    };
-                    image.src = url;
+                    printImage();
                 } else {
-                    message[message.indexOf(ans)] = ans.replaceAll("$", "")
+                    answer[answer.indexOf(ans)] = ans.replaceAll("$", "");
                 }
             }
-        })
-        const text = message.join("\n")
-        if (text) console.log(`%c${text} `, style);
+        });
+
+        const text = answer.join("\n");
+        if (text) {
+            console.log(`%c${text.trim()} `, style);
+        }
     }
 
-    function correctMultipleChoiceAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map((widget) => {
-            if (!widget.options?.choices) return;
-            return widget.options.choices.map(choice => {
-                if (choice.correct) {
-                    return choice.content;
-                }
-            });
+    function freeResponseAnswerFrom(question) {
+        const answer = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.answer) {
+                return widget.options.answer.map(answer => {
+                    return answer.value;
+                });
+            }
         }).flat().filter((val) => { return val !== undefined; });
-        logAnswer(answers);
+
+        return new Answer(answer, "free_response");
     }
 
-    function correctFreeResponseAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map((widget) => {
-            return widget.options.answers.map(answer => {
-                return answer.value;
-            });
+    function multipleChoiceAnswerFrom(question) {
+        const answer = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.choices) {
+                return widget.options.choices.map(choice => {
+                    if (choice.correct) {
+                        return choice.content;
+                    }
+                });
+            }
         }).flat().filter((val) => { return val !== undefined; });
-        logAnswer(answers);
+
+        return new Answer(answer, "multiple_choice");
     }
 
-    function correctExpressionAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map((widget) => {
-            return widget.options.answerForms.map(answer => {
-                if (Object.values(answer).includes("correct")) return answer.value;
-            });
+    function expressionAnswerFrom(question) {
+        const answer = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.answerForms) {
+                return widget.options.answerForms.map(answer => {
+                    if (Object.values(answer).includes("correct")) {
+                        return answer.value;
+                    }
+                });
+            }
         }).flat();
-        logAnswer(answers);
+
+        return new Answer(answer, "expression");
     }
 
-    function correctDropdownAnswerFrom(question) {
-        let answers = Object.values(question.widgets).map((widget) => {
-            return widget.options.choices.map(choice => {
-                if (choice.correct) return choice.content;
-            });
+    function dropdownAnswerFrom(question) {
+        const answer = Object.values(question.widgets).map((widget) => {
+            if (widget.options?.choices) {
+                return widget.options.choices.map(choice => {
+                    if (choice.correct) {
+                        return choice.content;
+                    }
+                });
+            }
         }).flat();
-        logAnswer(answers);
+
+        return new Answer(answer, "dropdown");
     }
 })();
