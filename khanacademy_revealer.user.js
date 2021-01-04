@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      1.0
+// @version      1.1
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -34,7 +34,42 @@
         }
 
         log() {
-            logAnswer(this.body);
+            const answer = this.body;
+            const style = "color: coral; -webkit-text-stroke: .5px black; font-size:24px; font-weight:bold;";
+    
+            answer.map(ans => {
+                if (typeof ans == "string") {
+                    if (ans.includes("web+graphie")) {
+                        this.printImage(ans);
+                    } else {
+                        answer[answer.indexOf(ans)] = ans.replaceAll("$", "");
+                    }
+                }
+            });
+    
+            const text = answer.join("\n");
+            if (text) {
+                console.log(`%c${text.trim()} `, style);
+            }
+        }
+
+        printImage(ans) {
+            const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
+            const image = new Image();
+
+            image.src = url;
+            answer[answer.indexOf(ans)] = "";
+            image.onload = () => {
+                const imageStyle = [
+                    'font-size: 1px;',
+                    'line-height: ', this.height % 2, 'px;',
+                    'padding: ', this.height * .5, 'px ', this.width * .5, 'px;',
+                    'background-size: ', this.width, 'px ', this.height, 'px;',
+                    'background: url(', url, ');'
+                ].join(' ');
+                console.log('%c ', imageStyle);
+            };
+
         }
     }
 
@@ -86,44 +121,6 @@
 
             return res;
         })
-    }
-
-    function logAnswer(answer) {
-        const style = "color: coral; -webkit-text-stroke: .5px black; font-size:24px; font-weight:bold;";
-
-        const printImage = () => {
-            const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
-            const image = new Image();
-
-            image.src = url;
-            answer[answer.indexOf(ans)] = "";
-            image.onload = () => {
-                const imageStyle = [
-                    'font-size: 1px;',
-                    'line-height: ', this.height % 2, 'px;',
-                    'padding: ', this.height * .5, 'px ', this.width * .5, 'px;',
-                    'background-size: ', this.width, 'px ', this.height, 'px;',
-                    'background: url(', url, ');'
-                ].join(' ');
-                console.log('%c ', imageStyle);
-            };
-
-        }
-
-        answer.map(ans => {
-            if (typeof ans == "string") {
-                if (ans.includes("web+graphie")) {
-                    printImage();
-                } else {
-                    answer[answer.indexOf(ans)] = ans.replaceAll("$", "");
-                }
-            }
-        });
-
-        const text = answer.join("\n");
-        if (text) {
-            console.log(`%c${text.trim()} `, style);
-        }
     }
 
     function freeResponseAnswerFrom(question) {
