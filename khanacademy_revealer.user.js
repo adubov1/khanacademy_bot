@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      1.2
+// @version      1.3
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -36,29 +36,29 @@
         log() {
             const answer = this.body;
             const style = "color: coral; -webkit-text-stroke: .5px black; font-size:24px; font-weight:bold;";
-    
+
             answer.map(ans => {
                 if (typeof ans == "string") {
                     if (ans.includes("web+graphie")) {
-                        this.printImage(answer, ans);
+                        this.body[this.body.indexOf(ans)] = "";
+                        this.printImage(ans);
                     } else {
                         answer[answer.indexOf(ans)] = ans.replaceAll("$", "");
                     }
                 }
             });
-    
+
             const text = answer.join("\n");
             if (text) {
                 console.log(`%c${text.trim()} `, style);
             }
         }
 
-        printImage(answer, ans) {
+        printImage(ans) {
             const url = ans.replace("![](web+graphie", "https").replace(")", ".svg");
             const image = new Image();
 
             image.src = url;
-            answer[answer.indexOf(ans)] = "";
             image.onload = () => {
                 const imageStyle = [
                     'font-size: 1px;',
@@ -69,7 +69,6 @@
                 ].join(' ');
                 console.log('%c ', imageStyle);
             };
-
         }
     }
 
