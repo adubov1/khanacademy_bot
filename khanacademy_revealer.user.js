@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Khan Academy Bot
-// @version      1.3
+// @version      1.4
 // @description  ur welcome cheater
 // @author       Alex Dubov (github@adubov1)
 // @match        https://www.khanacademy.org/*
@@ -126,7 +126,9 @@
         const answer = Object.values(question.widgets).map((widget) => {
             if (widget.options?.answers) {
                 return widget.options.answers.map(answer => {
-                    return answer.value;
+                    if (answer.status == "correct") {
+                        return answer.value;
+                    }
                 });
             }
         }).flat().filter((val) => { return val !== undefined; });
