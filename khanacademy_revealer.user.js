@@ -124,8 +124,8 @@
 
     function freeResponseAnswerFrom(question) {
         const answer = Object.values(question.widgets).map((widget) => {
-            if (widget.options?.answer) {
-                return widget.options.answer.map(answer => {
+            if (widget.options?.answers) {
+                return widget.options.answers.map(answer => {
                     return answer.value;
                 });
             }
