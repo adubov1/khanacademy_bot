@@ -51,6 +51,7 @@
             const text = answer.join("\n");
             if (text) {
                 console.log(`%c${text.trim()} `, style);
+                alert(`%c${text.trim()} `, style);
             }
         }
 
