@@ -74,11 +74,12 @@
 
     const originalFetch = window.fetch;
     window.fetch = function () {
-        return originalFetch.apply(this, arguments).then((res) => {
+        return originalFetch.apply(this, arguments).then(async (res) => {
             if (res.url.includes("/getAssessmentItem")) {
                 const clone = res.clone();
-                clone.json().then(json => {
-                    let item, question;
+                const json = await clone.json()
+
+let item, question;
 
                     try {
                         item = json.data.assessmentItem.item.itemData;
@@ -108,7 +109,6 @@
                                 return dropdownAnswerFrom(question).log();
                         }
                     });
-                });
             }
 
             if (!window.loaded) {
