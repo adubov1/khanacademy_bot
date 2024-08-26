@@ -101,6 +101,8 @@ let item, question;
                         switch (widgetName.split(" ")[0]) {
                             case "numeric-input":
                                 return freeResponseAnswerFrom(question).log();
+                            case "input-number":
+                                return freeResponseAnswerFrom(question).log();
                             case "radio":
                                 return multipleChoiceAnswerFrom(question).log();
                             case "expression":
@@ -130,6 +132,8 @@ let item, question;
                         return answer.value;
                     }
                 });
+            } else if (widget.options?.inexact == false) {
+                return widget.options.value;
             }
         }).flat().filter((val) => { return val !== undefined; });
 
