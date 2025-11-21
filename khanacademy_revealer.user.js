@@ -82,7 +82,7 @@
 let item, question;
 
                     try {
-                        item = json.data.assessmentItem.item.itemData;
+                        item = json.data.assessmentItemByProblemNumber.item.itemData;
                         question = JSON.parse(item).question;
                     } catch {
                         let errorIteration = () => { return localStorage.getItem("error_iter") || 0; }
